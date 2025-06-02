@@ -28,7 +28,19 @@ avg without(job, status)(rate(fulfilment_requests_total{status="failed"}[5m])) /
 ### q5- average failure rate by version:
 
 ```
-avg without(job, status, instance)(rate(fulfilment_requests_total{status="failed"}[5m]) * on(instance) group_left(app_version) app_info) / avg without(job, status, instance)(rate(fulfilment_requests_total{status="processed"}[5m])* on(instance) group_left(app_version) app_info)
+avg without (instance) (
+    (
+        avg without (job, status) (
+            rate(
+                fulfilment_requests_total{status='failed'}[5m]
+            )
+        ) / avg without (job, status) (
+            rate(
+                fulfilment_requests_total{status='processed'}[5m]
+            )
+        )
+    ) * on (instance) group_left(app_version) app_info
+)
 ```
 
 ### Results
